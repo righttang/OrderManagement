@@ -3,7 +3,7 @@
 angular.module('orderManagement')
     .controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
 
-        $scope.itemStatus = ['INITIATED','DELIVERED','POSSIBLE_DELAY'];
+        $scope.itemStatus = ['INITIATED', 'DELIVERED', 'POSSIBLE_DELAY'];
 
         $scope.orderID = '577af9ffffc1a072';
         var accountNumber = '0000500953';
@@ -43,5 +43,5 @@ angular.module('orderManagement')
             console.log("Change Status to " + status);
 
 
-            }
+        }
     }]);

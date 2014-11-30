@@ -21,13 +21,16 @@
         <table class="table">
             <tbody ng-repeat="shipment in order.shipments">
             <tr>
-                <td><b>Shipment ID:</b> </td><td>{{shipment.shipment_id}}</td>
+                <td><b>Shipment ID:</b></td>
+                <td>{{shipment.shipment_id}}</td>
                 <td>{{shipment.shipment_status}}</td>
             </tr>
             <tr ng-repeat="item in shipment.items">
-                <td>&nbsp;&nbsp;<b>Item ID: </b></td><td>{{item.item_id}}</td>
-                <td> <select ng-model="item.item_status"
-                                                   ng-options="item_state for item_state in itemStatus" ng-change="changeStatus(item)"></select><br></td>
+                <td>&nbsp;&nbsp;<b>Item ID: </b></td>
+                <td>{{item.item_id}}</td>
+                <td><select ng-model="item.item_status"
+                            ng-options="item_state for item_state in itemStatus"
+                            ng-change="changeStatus(item)"></select><br></td>
             </tr>
             </tbody>
         </table>
