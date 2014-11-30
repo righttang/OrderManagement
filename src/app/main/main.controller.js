@@ -1,47 +1,69 @@
 'use strict';
 
 angular.module('orderManagement')
-    .controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+    .controller('MainCtrl', ['$scope', '$http','$timeout', function ($scope, $http, $timeout) {
 
+        $scope.endPoints = ['http://team42-ci.getsandbox.com/', '', ''];
+        $scope.accounts = ['0000500953'];
         $scope.itemStatus = ['INITIATED', 'DELIVERED', 'POSSIBLE_DELAY'];
+        $scope.showItemJson = [];
+        $scope.showOrderJson = [];
+        $scope.updateItemStatus = [];
+        $scope.showSummary = 1;
 
         $scope.orderID = '577af9ffffc1a072';
-        var accountNumber = '0000500953';
-        var baseURL = 'http://team42-ci.getsandbox.com/';
-        var accountQuery = baseURL + 'accounts/' + accountNumber;
+        $scope.accountNumber = '0000500953';
+        $scope.baseURL = 'http://team42-ci.getsandbox.com/';
+        var accountQuery = function () {
+            return  $scope.baseURL + 'accounts/' + $scope.accountNumber;
+        };
         var orderQuery = function () {
-            return baseURL + 'locations/' + accountNumber + '/order/' + $scope.orderID;
-        }
-        var listOrderQuery = baseURL + 'shipments/location/' + accountNumber + '/order/list?offset=0&amount=100';
+            return $scope.baseURL + 'locations/' + $scope.accountNumber + '/order/' + $scope.orderID;
+        };
+        var listOrderQuery = function () {
+            return $scope.baseURL + 'shipments/location/' + $scope.accountNumber + '/order/list?offset=0&amount=100';
+        };
 
         $scope.orderTotalItems = function (order) {
             var totalItems = 0;
-            $.each(order.shipments, function () {
-                totalItems += this.items.length;
+            angular.forEach(order.shipments, function (shipment) {
+                totalItems += shipment.items.length;
             });
             return totalItems;
-        }
-        $http.get(listOrderQuery).
-            success(function (data, status, headers, config) {
-                $scope.listOrders = data;
+        };
 
-            });
-
-        $scope.getOrderByID = function (orderID) {
-            $scope.orderID = orderID;
-            $http.get(orderQuery()).
+        $scope.refreshList = function () {
+            $http.get(listOrderQuery()).
                 success(function (data, status, headers, config) {
-                    $scope.order = data;
-                }).
-                error(function (data, status, headers, config) {
+                    $scope.listOrders = data;
+                });
+            $http.get(accountQuery()).
+                success(function (data, status, headers, config) {
                     console.log(data);
                 });
         };
 
 
-        $scope.changeStatus = function (status) {
-            console.log("Change Status to " + status);
+        $scope.getOrderByID = function (orderID) {
+            $scope.orderID = orderID;
+            $http.get(orderQuery()).
+                success(function (data) {
+                    $scope.order = data;
+                });
+        };
 
 
-        }
+        $scope.changeStatus = function (item) {
+            $scope.updateItemStatus[item.item_id] = '';
+            $http.get(orderQuery())
+                .success(function (data) {
+                    $scope.updateItemStatus[item.item_id] = 'Update OK';
+                    $timeout(function() {
+                        $scope.updateItemStatus[item.item_id] = '';
+                    }, 3000);
+                })
+                .error(function () {
+                    $scope.updateItemStatus[item.item_id] = 'Update Failed';
+                });
+        };
     }]);

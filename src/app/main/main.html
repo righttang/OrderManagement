@@ -1,13 +1,30 @@
+<div class="container">
+    <b>End Point</b>
+    <select ng-model="baseURL"
+            ng-options="endpoint for endpoint in endPoints"
+            ng-change="refreshList()"
+            ng-init="refreshList()"></select>
+    <b>Location/Account Number</b>
+    <select ng-model="accountNumber"
+            ng-options="account for account in accounts"
+            ng-change="refreshList()"></select>
+</div>
 <table class="table">
-    <td>
+    <td width="40%">
         <table class="table table-striped">
             <th>Orders ID</th>
-            <th>Total Shipment No.</th>
-            <th>Total Item No.</th>
-            <tr ng-repeat="order in listOrders.orders">
-                <td><a href="" ng-click="getOrderByID(order.order_id)">{{order.order_id}}</a></td>
-                <td>{{order.shipments.length}}</td>
-                <td>{{orderTotalItems(order)}}</td>
+            <th>Total Shipment No./ Total Item No.</th>
+            <th>Order Status</th>
+            <tr ng-repeat-start="order in listOrders.orders">
+                <td><a href="" ng-click="showOrderJson[order.order_id] = !showOrderJson[order.order_id]">+</a>
+                    <a href="" ng-click="getOrderByID(order.order_id)">{{order.order_id}}</a></td>
+                <td>{{order.shipments.length}} Shipments   {{orderTotalItems(order)}} items</td>
+                <td>{{order.order_status}}</td>
+            </tr>
+            <tr ng-repeat-end ng-show="showOrderJson[order.order_id]">
+                <td colspan="3">
+                    <pre>{{order | json}}</pre>
+                </td>
             </tr>
 
         </table>
@@ -15,8 +32,9 @@
     </td>
     <td>
         <form>
-            <input type="text" ng-model="orderID">
+            Order ID: <input type="text" ng-model="orderID">
             <button ng-click="getOrderByID(orderID)">Refresh Order</button>
+            <label><input type="checkbox" ng-model="showSummary" ng-true-value="1" ng-false-value="3"> Show Summary</label>
         </form>
         <table class="table">
             <tbody ng-repeat="shipment in order.shipments">
@@ -25,18 +43,23 @@
                 <td>{{shipment.shipment_id}}</td>
                 <td>{{shipment.shipment_status}}</td>
             </tr>
-            <tr ng-repeat="item in shipment.items">
-                <td>&nbsp;&nbsp;<b>Item ID: </b></td>
-                <td>{{item.item_id}}</td>
-                <td><select ng-model="item.item_status"
+            <tr ng-repeat-start="item in shipment.items">
+                <td width="30%"><a href="" ng-click="showItemJson[item.item_id] = !showItemJson[item.item_id]">+<b>Item ID: </b></a>
+                </td>
+                <td width="30%">{{item.item_id}}</td>
+                <td width="40%"><select ng-attr-size="{{showSummary}}" ng-model="item.item_status"
                             ng-options="item_state for item_state in itemStatus"
-                            ng-change="changeStatus(item)"></select><br></td>
+                            ng-change="changeStatus(item)"></select> <span>{{updateItemStatus[item.item_id]}}</span><br></td>
+            </tr>
+            <tr ng-repeat-end ng-show="showItemJson[item.item_id]">
+                <td colspan="3">
+                    <pre>{{item | json}}</pre>
+                </td>
             </tr>
             </tbody>
         </table>
 
     </td>
-    <td>right</td>
 
 </table>
 
