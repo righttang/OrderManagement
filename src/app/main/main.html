@@ -1,0 +1,40 @@
+<table class="table">
+    <td>
+        <table class="table table-striped">
+            <th>Orders ID</th>
+            <th>Total Shipment No.</th>
+            <th>Total Item No.</th>
+            <tr ng-repeat="order in listOrders.orders">
+                <td><a href="" ng-click="getOrderByID(order.order_id)">{{order.order_id}}</a></td>
+                <td>{{order.shipments.length}}</td>
+                <td>{{orderTotalItems(order)}}</td>
+            </tr>
+
+        </table>
+
+    </td>
+    <td>
+        <form>
+            <input type="text" ng-model="orderID">
+            <button ng-click="getOrderByID(orderID)">Refresh Order</button>
+        </form>
+        <table class="table">
+            <tbody ng-repeat="shipment in order.shipments">
+            <tr>
+                <td><b>Shipment ID:</b> </td><td>{{shipment.shipment_id}}</td>
+                <td>{{shipment.shipment_status}}</td>
+            </tr>
+            <tr ng-repeat="item in shipment.items">
+                <td>&nbsp;&nbsp;<b>Item ID: </b></td><td>{{item.item_id}}</td>
+                <td> <select ng-model="item.item_status"
+                                                   ng-options="item_state for item_state in itemStatus" ng-change="changeStatus(item)"></select><br></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </td>
+    <td>right</td>
+
+</table>
+
+
